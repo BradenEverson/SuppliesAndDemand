@@ -1,5 +1,30 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model List<SuppliesAndDeman.Models.DataModels.Order>
 @{
+}
+<div id="map" style="width: 1200px; height: 800px;"></div>
+<script>
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    }
+    function showPosition(position) {
+        var map = L.map('map').setView([position.coords.latitude, position.coords.longitude], 12);
+        L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiYnJhZGVuZXZlcnNlIiwiYSI6ImNrbHB1ajl6MjE3MGUyd282bWJycmdwczgifQ.1vq1sIG-ZkASQNcwisBwgg', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+            maxZoom: 18,
+            id: 'mapbox/streets-v11',
+            tileSize: 512,
+            zoomOffset: -1,
+            accessToken: 'pk.eyJ1IjoiYnJhZGVuZXZlcnNlIiwiYSI6ImNrbHB1ajl6MjE3MGUyd282bWJycmdwczgifQ.1vq1sIG-ZkASQNcwisBwgg'
+        }).addTo(map);
+        /**/
+    }
+</script>
+@foreach (var order in Model)
+{
+    <script>
+        fetch("http://open.mapquestapi.com/geocoding/v1/address?key=HhjDWIJEndFRTG0JWwuGRRuIjj6btqjt&street=@order.street&country=@order.country")
+            .then(response => {
+                var marker = L.marker([response.json["results"]["locations"]["latLng"]["lat"], response.json["results"]["locations"]["latLng"]["long"]]).addTo(map);
+            })
+    </script>
 }
